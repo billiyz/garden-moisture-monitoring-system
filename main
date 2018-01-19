@@ -1,0 +1,67 @@
+
+#include "mbed.h"
+#include "SDFileSystem.h"
+#include "ILI9340_Driver.h"
+
+Serial pc(USBTX, USBRX);                    // Use Serial interface
+SDFileSystem sd(D11, D12, D13, D10, "sd");  // MOSI, MISO, SCK, CS
+FILE *fp;                                   // File pointer declear
+
+
+long moisture;                      // For calucrate
+    
+int main() {
+      pc.baud(115200);
+
+ // create the Analog object
+    AnalogIn    myA1(A1);
+   
+// set up variables
+     long moisture;                      // For calucrate
+    
+    while (1) {
+
+    unsigned int a, beta = 3975, units, tens;
+    float moisture, resistance;
+
+    a = myA1.read_u16(); /* Read analog value */
+
+    // Read the value of the sensor
+    float moist = moisture.read();
+    // Print it back to the computer
+    printf("Moisture value is %f\r\n", moist);
+
+    // If we're > 10% moist, then toggle the LED
+    if (moist > 0.10) {
+        led = 1;
+    }
+    else {
+        led = 0;
+    }
+
+    // Pause between readings
+    wait_ms(100);
+        
+        // wait(0.5);
+        // SD card logger
+        mkdir("/sd", 0777);
+        for(int i=0;i<1000;i++){
+        fp = fopen("/sd/mylogger.txt", "w");            // File open for "a"ppend
+        if (fp == NULL) {                               // Error!
+            pc.printf("Unable to write the file\r\n");
+        } else {
+            pc.printf("%f \r\n",// Read the value of the sensor
+   
+            fprintf(fp, "%f \r\n",moisture);        // Serial monitor.
+        }
+        fclose(fp);                                     // Cloce file.
+        pc.printf("File successfully written!\r\n");    // Serial monitor.
+
+        
+        wait(10);
+       
+        
+    }
+}
+}
+
